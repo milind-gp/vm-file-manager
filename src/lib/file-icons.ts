@@ -60,24 +60,24 @@ export function getFileIcon(filename: string, isDirectory: boolean): LucideIcon 
 }
 
 export function getFileIconColor(filename: string, isDirectory: boolean): string {
-  if (isDirectory) return "text-blue-500";
+  if (isDirectory) return "text-rose-400";
 
   const ext = filename.split(".").pop()?.toLowerCase() ?? "";
   const colorMap: Record<string, string> = {
-    js: "text-yellow-500", jsx: "text-yellow-500", mjs: "text-yellow-500",
-    ts: "text-blue-600", tsx: "text-blue-600",
-    py: "text-green-600", rb: "text-red-500", go: "text-cyan-500",
-    rs: "text-orange-600", java: "text-red-600",
-    html: "text-orange-500", css: "text-blue-500",
-    json: "text-yellow-600", md: "text-gray-500",
-    jpg: "text-pink-500", png: "text-pink-500", gif: "text-pink-500",
-    svg: "text-orange-400",
-    mp4: "text-purple-500", mp3: "text-green-500",
-    pdf: "text-red-500",
-    sh: "text-green-400",
-    sql: "text-blue-400",
-    env: "text-yellow-400",
-    lock: "text-gray-400",
+    js: "text-amber-400", jsx: "text-amber-400", mjs: "text-amber-400",
+    ts: "text-violet-400", tsx: "text-violet-400",
+    py: "text-emerald-400", rb: "text-rose-400", go: "text-teal-400",
+    rs: "text-orange-400", java: "text-red-400",
+    html: "text-orange-300", css: "text-sky-400",
+    json: "text-amber-300", md: "text-pink-300",
+    jpg: "text-pink-400", png: "text-pink-400", gif: "text-pink-400",
+    svg: "text-rose-300",
+    mp4: "text-violet-300", mp3: "text-emerald-300",
+    pdf: "text-red-400",
+    sh: "text-teal-300",
+    sql: "text-indigo-300",
+    env: "text-amber-300",
+    lock: "text-stone-400",
   };
-  return colorMap[ext] || "text-gray-400";
+  return colorMap[ext] || "text-stone-400";
 }
