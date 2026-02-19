@@ -9,7 +9,9 @@ import { Toolbar } from "./toolbar";
 import { FileGrid } from "./file-grid";
 import { UploadZone } from "@/components/upload/upload-zone";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, FolderOpen, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useUIStore } from "@/stores/ui-store";
 import { useMemo, useRef } from "react";
 import type { FileEntry } from "../../../server/ssh/sftp-operations";
 
@@ -40,10 +42,20 @@ export function FileExplorer() {
     return sortEntries(e, explorer.sortBy, explorer.sortDir);
   }, [data?.entries, explorer.showHidden, explorer.sortBy, explorer.sortDir]);
 
+  const openConnectionForm = useUIStore((s) => s.openConnectionForm);
+
   if (!connectionId || !active || active.status !== "connected") {
     return (
-      <div className="flex h-full items-center justify-center text-muted-foreground">
-        <p>Select a connection from the sidebar to browse files</p>
+      <div className="flex h-full flex-col items-center justify-center gap-4 text-muted-foreground">
+        <FolderOpen className="h-16 w-16 opacity-20" strokeWidth={1} />
+        <div className="text-center space-y-1">
+          <p className="text-lg font-medium text-foreground/70">Your workspace is ready</p>
+          <p className="text-sm">Select a connection from the sidebar to get started</p>
+        </div>
+        <Button variant="outline" size="sm" onClick={() => openConnectionForm()}>
+          <Plus className="h-4 w-4 mr-1.5" />
+          New Connection
+        </Button>
       </div>
     );
   }

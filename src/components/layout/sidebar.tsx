@@ -17,15 +17,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Server, Plus, Bookmark, FolderTree, Wifi, WifiOff, Trash2, Pencil,
-  MoreHorizontal, Unplug, Download,
+  Server, Plus, Bookmark, History, Wifi, WifiOff, Trash2, Pencil,
+  MoreHorizontal, Unplug, Download, Folder,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useMemo } from "react";
 
 export function Sidebar() {
   const { activeConnections, activeTabId, setActiveTab, setConnectionStatus } = useConnectionStore();
-  const { navigate } = useExplorerStore();
+  const { navigate, getExplorer } = useExplorerStore();
   const openConnectionForm = useUIStore((s) => s.openConnectionForm);
   const openSSHImport = useUIStore((s) => s.openSSHImport);
   const queryClient = useQueryClient();
@@ -137,10 +138,10 @@ export function Sidebar() {
                 <div
                   key={conn.id}
                   className={cn(
-                    "group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors",
+                    "group flex items-center gap-2 rounded-md px-2 py-2 text-sm cursor-pointer transition-colors",
                     activeTabId === conn.id
-                      ? "bg-accent text-accent-foreground"
-                      : "hover:bg-accent/50"
+                      ? "bg-accent text-accent-foreground border-l-2 border-l-primary"
+                      : "hover:bg-accent/50 border-l-2 border-l-transparent"
                   )}
                   onClick={() => isConnected ? setActiveTab(conn.id) : handleConnect(conn.id)}
                 >
@@ -211,7 +212,7 @@ export function Sidebar() {
             {bookmarks.map((bm) => (
               <div
                 key={bm.id}
-                className="group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm cursor-pointer hover:bg-accent/50"
+                className="group flex items-center gap-2 rounded-md px-2 py-2 text-sm cursor-pointer hover:bg-accent/50"
                 onClick={() => handleNavigateBookmark(bm.connectionId, bm.path)}
               >
                 <Bookmark className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
@@ -220,6 +221,9 @@ export function Sidebar() {
                   {bm.label && (
                     <div className="text-xs text-muted-foreground truncate">{bm.path}</div>
                   )}
+                  <div className="text-xs text-muted-foreground/60 truncate">
+                    {connections.find((c) => c.id === bm.connectionId)?.name ?? "Unknown"}
+                  </div>
                 </div>
                 <Button
                   variant="ghost"
@@ -244,21 +248,72 @@ export function Sidebar() {
 
         <Separator />
 
-        {/* Quick Tree Nav */}
+        {/* Recent Paths */}
         {activeTabId && activeConnections.get(activeTabId)?.status === "connected" && (
-          <div>
-            <div className="flex items-center mb-2">
-              <h3 className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">
-                <FolderTree className="h-3 w-3 inline mr-1" />
-                Quick Navigate
-              </h3>
-            </div>
-            <p className="text-xs text-muted-foreground px-2">
-              Use the file explorer to browse files
-            </p>
-          </div>
+          <RecentPaths
+            connectionId={activeTabId}
+            getExplorer={getExplorer}
+            onNavigate={(path) => navigate(activeTabId, path)}
+          />
         )}
       </div>
     </ScrollArea>
+  );
+}
+
+function RecentPaths({
+  connectionId,
+  getExplorer,
+  onNavigate,
+}: {
+  connectionId: string;
+  getExplorer: (id: string) => { currentPath: string; history: string[] };
+  onNavigate: (path: string) => void;
+}) {
+  const explorer = getExplorer(connectionId);
+
+  const recentPaths = useMemo(() => {
+    const seen = new Set<string>();
+    const result: string[] = [];
+    // Walk history backwards, skip current path, deduplicate
+    for (let i = explorer.history.length - 1; i >= 0; i--) {
+      const p = explorer.history[i];
+      if (p === explorer.currentPath || seen.has(p)) continue;
+      seen.add(p);
+      result.push(p);
+      if (result.length >= 8) break;
+    }
+    return result;
+  }, [explorer.history, explorer.currentPath]);
+
+  return (
+    <div>
+      <div className="flex items-center mb-2">
+        <h3 className="text-xs font-semibold uppercase text-muted-foreground tracking-wider">
+          <History className="h-3 w-3 inline mr-1" />
+          Recent
+        </h3>
+      </div>
+      <div className="space-y-1">
+        {recentPaths.map((p) => (
+          <div
+            key={p}
+            className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm cursor-pointer hover:bg-accent/50"
+            onClick={() => onNavigate(p)}
+          >
+            <Folder className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+            <div className="flex-1 min-w-0">
+              <div className="truncate">{p.split("/").pop() || "/"}</div>
+              <div className="text-xs text-muted-foreground truncate">{p}</div>
+            </div>
+          </div>
+        ))}
+        {recentPaths.length === 0 && (
+          <p className="text-xs text-muted-foreground px-2 py-2 text-center">
+            No recent paths
+          </p>
+        )}
+      </div>
+    </div>
   );
 }

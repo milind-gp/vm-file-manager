@@ -155,8 +155,9 @@ export function FileGrid({ connectionId, entries, viewMode, selectedItems, onRef
 
   if (entries.length === 0) {
     return (
-      <div className="flex h-full items-center justify-center text-muted-foreground p-8">
-        <p>This folder is empty</p>
+      <div className="flex h-full flex-col items-center justify-center gap-3 text-muted-foreground p-8">
+        <FolderOpen className="h-12 w-12 opacity-20" strokeWidth={1} />
+        <p className="text-sm">This folder is empty</p>
       </div>
     );
   }
