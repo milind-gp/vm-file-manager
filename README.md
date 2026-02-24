@@ -2,6 +2,12 @@
 
 A self-hosted, web-based file manager for remote servers over SSH/SFTP. Think "VS Code's file explorer + terminal" accessible from any browser — browse files, edit code, run commands, and transfer files on your remote VMs without leaving the browser.
 
+## Screenshots
+
+| Dark Mode | Light Mode |
+|-----------|------------|
+| ![Dark Mode](docs/screenshot-dark.png) | ![Light Mode](docs/screenshot-light.png) |
+
 ## Features
 
 - **File Explorer** — Browse remote directories in grid or list view, with sorting, breadcrumb navigation, and hidden file toggles
