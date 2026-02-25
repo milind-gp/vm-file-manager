@@ -74,6 +74,9 @@ export async function connect(config: ConnectionConfig): Promise<Client> {
     readyTimeout: 10_000,
     keepaliveInterval: 30_000,
     keepaliveCountMax: 3,
+    algorithms: {
+      compress: ["zlib@openssh.com", "zlib", "none"],
+    },
   };
 
   return new Promise((resolve, reject) => {

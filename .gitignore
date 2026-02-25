@@ -45,6 +45,7 @@ next-env.d.ts
 /db/*.db-shm
 /db/*.db-journal
 /db/*.db-wal
+!/db/.gitkeep
 
 # ssh keys
 /keys/*

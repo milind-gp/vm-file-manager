@@ -31,6 +31,7 @@ export function FileExplorer() {
     queryKey: ["fs", "list", connectionId, explorer.currentPath],
     queryFn: () => fsApi.list(connectionId, explorer.currentPath),
     enabled: !!connectionId && active?.status === "connected",
+    staleTime: 30_000,
     refetchOnWindowFocus: false,
   });
 
